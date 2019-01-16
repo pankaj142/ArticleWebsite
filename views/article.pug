@@ -1,0 +1,11 @@
+extends layout
+
+block content 
+  h2= article.title
+  h4 written by #{article.author}
+  p= article.body
+  hr
+  a(href='/articles/edit/'+article._id)
+    button(type="button").btn.btn-info Edit
+  a(href='#')
+    button(type="button" data-id=article._id).btn.btn-danger.delete-article Delete
