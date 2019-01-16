@@ -5,13 +5,12 @@ const { check, validationResult } = require('express-validator/check');
 //Import Article Model
 const Article = require('../models/article');
 
-router.get('/add',function(req,res){
+router.get('/add', ensureAuthenticated, function(req,res){
     res.render('add_article',{title:'Add Article'})
 });
 
 router.post('/add',[
   check('title','Please enter Title!').not().isEmpty(),
-  check('author', 'Please enter Author!').not().isEmpty(),
   check('body','Please enter Article Body!').not().isEmpty()
 ],function(req,res){
     const errors = validationResult(req);
@@ -20,9 +19,9 @@ router.post('/add',[
         res.render('add_article',{title: "Add Article", errors : allErrors})
     }else{
         let article = new Article();
-        
         article.title = req.body.title;
-        article.author = req.body.author;
+        //req.user contains logined users details
+        article.author = req.user.name;
         article.body = req.body.body;
         console.log(" article submitted")
         article.save(function(err){
@@ -49,10 +48,14 @@ router.get('/:id', function (req, res) {
 })
 
 //Load Edit Form
-router.get('/edit/:id',function(req,res){
+router.get('/edit/:id', ensureAuthenticated, function(req,res){
+    console.log("edit req.body",req.body)
     Article.findById(req.params.id,function(err,article){
         if(err){
             console.log("err",err);
+        }if(article.author != req.user.name){ //only the owner of article can edit
+            req.flash("danger","You are not autherized!");
+            res.redirect('/')
         }else{
             res.render('edit_article',{title:"Edit Article",article:article})
         }
@@ -79,17 +82,33 @@ router.post('/edit/:id',function(req,res){
 })
 
 //Delete Article
-router.delete('/:id',function(req,res){
-    const query = {_id:req.params.id}
-    Article.remove(query,function(err){
-        if(err){
-            console.log(err)
+router.delete('/:id', ensureAuthenticated, function(req,res){
+    Article.findById(req.params.id, function(err, article){
+        if(err) throw err;
+        if(article.author != req.user.name){
+            res.status(500).send()
         }else{
-            //danger beacuse the it is the bootstrap class of alert
-            req.flash("danger","Article Deleted successfully!")
-            res.send("Success")
+            const query = {_id:req.params.id}
+            Article.remove(query,function(err){
+                if(err){
+                    console.log(err)
+                }else{
+                    //danger beacuse the it is the bootstrap class of alert
+                    req.flash("danger","Article Deleted successfully!")
+                    res.send("Success")
+                }
+            })
         }
     })
 })
+
+function ensureAuthenticated(req,res,next){
+    if(req.isAuthenticated()){
+        next();
+    }else{
+        req.flash('danger','Please Login');
+        res.redirect('/users/login')
+    }
+}
 
 module.exports = router;

@@ -15,10 +15,16 @@ html
             a.nav-link(href='/')
               | Home 
               span.sr-only (current)
-          li.nav-item
-            a.nav-link(href='/articles/add') Add Article
+          if user
+            li.nav-item
+              a.nav-link(href='/articles/add') Add Article
         ul.navbar-nav.ml-auto
           if user
+            li.nav-item.profile
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                span.glyphicon.glyphicon-user
+                strong= user.name
+                span.glyphicon.glyphicon-chevron-down
             li.nav-item
               a.nav-link(href="/users/logout") Logout
           else

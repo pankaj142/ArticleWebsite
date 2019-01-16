@@ -69,6 +69,7 @@ app.get('*',function(req,res,next){
 
 // Home Route
 app.get('/',function(req,res){
+    console.log("auth req.user",req.user)
     Article.find({},function(err,articles){
         if(err){
             console.log(err)

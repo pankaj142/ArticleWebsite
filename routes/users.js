@@ -42,7 +42,7 @@ router.post('/register',[
                         if(err){
                             console.log(err)
                         }else{
-                            req.flash("success", "You Registered!");
+                            req.flash("success", "You Registered successfully! You can login!");
                             res.redirect('/')
                         }
                     })
