@@ -4,8 +4,8 @@ Write your Article/Blog on this website.
 # Functionalities
 
 * Its Blog website.
-* Author can resister and can write their blogs/articles.
-* Author can edit and delete his/her articles
+* User can resister and can write their blogs/articles.
+* User can edit and delete his/her articles
 * Anyone can visite and read all articles without logging in.
 
 # Technologies
