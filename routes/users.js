@@ -134,7 +134,7 @@ router.get('/profile/:id',function(req,res){
             Article.find({userId: user_profile._id},function(err,articles){
                 console.log('articles fileds',articles)
                 res.render('user_profile',{user_profile: user_profile, articles: articles})
-            }).select('title')
+            }).select(['title','author'])
         }
     })
     
