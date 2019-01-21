@@ -8,7 +8,7 @@ const config = require('./config/database');
 
 
 mongoose.connect(config.database);
-let db = mongoose.connection;
+var db = mongoose.connection;
 
 //check for DB Errors
 db.on('error', console.error.bind(console, 'connection error:'));

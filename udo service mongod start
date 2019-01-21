@@ -1,0 +1,26 @@
+[1mdiff --git a/app.js b/app.js[m
+[1mindex eccaba4..67d8675 100644[m
+[1m--- a/app.js[m
+[1m+++ b/app.js[m
+[36m@@ -8,7 +8,7 @@[m [mconst config = require('./config/database');[m
+ [m
+ [m
+ mongoose.connect(config.database);[m
+[31m-let db = mongoose.connection;[m
+[32m+[m[32mvar db = mongoose.connection;[m
+ [m
+ //check for DB Errors[m
+ db.on('error', console.error.bind(console, 'connection error:'));[m
+[1mdiff --git a/views/user_profile.pug b/views/user_profile.pug[m
+[1mindex 5739c04..60868b6 100644[m
+[1m--- a/views/user_profile.pug[m
+[1m+++ b/views/user_profile.pug[m
+[36m@@ -8,7 +8,7 @@[m [mblock content[m
+         .card-body(style="padding-left:10px")[m
+           h5.card-title.pb-3 #{user_profile.name}[m
+           h5.card-title.pb-3 #{user_profile.email}[m
+[31m-    .col-md-8 [m
+[32m+[m[32m    .col-md-8[m
+       h3 #{user_profile.name}'s Artilces [m
+       ul.list-group[m
+         each article, i in articles[m
