@@ -8,9 +8,15 @@ block content
         .card-body(style="padding-left:10px")
           h5.card-title.pb-3 #{user_profile.name}
           h5.card-title.pb-3 #{user_profile.email}
-    .col-md-8
-      h3 #{user_profile.name}'s Artilces 
-      ul.list-group
+    .col-md-8(style='margin-top:10px')
+      h3(style="padding-left:5px") #{user_profile.name}'s Artilces 
+        if user && user_profile.name == user.name
+          span(style="float:right;")
+            a(href="/articles/add") 
+              button.btn.btn-primary(type='button') Add Article
+      if articles.length == 0       
+        h6(style="padding-left:5px") No Article added yet 
+      ul.list-group(style="margin-top:20px")
         each article, i in articles
           a(href="/articles/"+article._id)
             li.list-group-item= article.title       

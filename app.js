@@ -18,7 +18,7 @@ db.once('open', function() {
     console.log("Connected to MongoDB")
 });
 
-//Bring on Models
+//Article Models
 let Article = require('./models/article')
 
 //Init App
@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 //Avatar folder 
 app.use('/avatars',express.static('uploads/users/avatars'));
-//Avatar folder 
+//Article Image folder 
 app.use('/article/images',express.static('uploads/articles/images'));
 
 // Load View Engine
