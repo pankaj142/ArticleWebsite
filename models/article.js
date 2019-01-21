@@ -9,8 +9,24 @@ let articleSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    description:{
+        type:String,
+        required:true
+    },
     body:{
         type: String,
+        required:true
+    },
+    images:{
+        type:String,
+        required:false
+    },
+    date:{
+        type:String,
+        required:true
+    },
+    userId:{
+        type:String,
         required:true
     }
   });

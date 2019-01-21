@@ -6,6 +6,7 @@ const session = require('express-session');
 const passport = require('passport');
 const config = require('./config/database');
 
+
 mongoose.connect(config.database);
 let db = mongoose.connection;
 
@@ -25,6 +26,11 @@ const app = express();
 
 //Static Files
 app.use(express.static(path.join(__dirname, 'public')))
+
+//Avatar folder 
+app.use('/avatars',express.static('uploads/users/avatars'));
+//Avatar folder 
+app.use('/article/images',express.static('uploads/articles/images'));
 
 // Load View Engine
 app.set('views',path.join(__dirname,'views'));
@@ -60,6 +66,8 @@ require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+//multer Middleware
+
 //Set global variable 'user' if there is actually object req.user
 //after authentication req.user will contain authenticated user
 app.get('*',function(req,res,next){
@@ -74,7 +82,29 @@ app.get('/',function(req,res){
         if(err){
             console.log(err)
         }else{
-            res.render('index',{title:"Articles", articles:articles})
+            console.log("articles xxxx",articles)
+            const archives = ['March 2018','April 2018','May 2018','June 2018','Jully 2018','August 2018',
+            'Sept 2018','November 2018','December 2018'];
+            var latestArticleCount = 0;
+            if(articles.length !== 0){
+                latestArticleCount = articles.length -1;
+            }else{
+                var obj = {}
+                obj.title = "Article Titel",
+                obj.date= "Jan 2019",
+                obj.description= "This is dummy article.";
+                articles.push(obj)
+            }
+            articles.map(function(article){
+                article.date = article.date.split(' ')[1] +' '+ article.date.split(' ')[3];
+                return article;
+            })
+            res.render('index',{
+                title:"Articles",
+                articles: articles,
+                archives: archives,
+                latestArticleCount: latestArticleCount
+            })
         }
     })
 })

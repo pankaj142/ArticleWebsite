@@ -2,10 +2,16 @@ extends layout
 
 block content
   h2 #{title}
-  form(method="POST" action="/articles/add")
+  form(method="POST" action="/articles/add" enctype="multipart/form-data")
     #form-group
       label Title
       input.form-control(name="title", type="text")
+    #form-group
+      label Description
+      input.form-control(name="description", type="text")
+    #form-group
+      label Picture
+      input.form-control(name="picture", type="file")  
     #form-group
       label Body
       textarea.form-control(name="body")

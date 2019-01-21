@@ -1,12 +1,23 @@
 extends layout
 
 block content 
-  h2= article.title
-  h4 written by #{article.author}
-  p= article.body
-  //- if user && article.author == user.name
-  hr 
-  a(href='/articles/edit/'+article._id)
-    button(type="button").btn.btn-info Edit
-  a(href='#')
-    button(type="button" data-id=article._id).btn.btn-danger.delete-article Delete
+  .row(style='padding-top:20px;padding-left:20px;')
+    .col-md-4
+      h4= article.title
+      .row(style='padding-left:10px;margin-top:20px;')
+        a(href="/users/profile/"+author._id)
+          img.rounded-circle(src='/avatars/'+author.avatar, alt='Cinque Terre', width='80', height='80')
+        .col(style='margin-top:10px;')
+          a(href="/users/profile/"+author._id)
+            h6 #{article.author}
+          h6 #{article.date}
+      h6= article.description    
+    .col-md-8
+      img(src='/article/images/'+article.images, style='width:100%;height:300px;' alt='Article Image')
+  p(style='margin-top:20px;font-family: "Tangerine", serif;')= article.body
+  if user && article.author == user.name
+    hr 
+    a(href='/articles/edit/'+article._id)
+      button(type="button").btn.btn-info Edit
+    a(href='#')
+      button(type="button" data-id=article._id).btn.btn-danger.delete-article Delete

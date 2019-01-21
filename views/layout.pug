@@ -22,8 +22,10 @@ html
           if user
             li.nav-item.profile
               a.dropdown-toggle(href='#', data-toggle='dropdown')
-                span.glyphicon.glyphicon-user
-                strong= user.name
+                span
+                  strong Hello, 
+                span
+                  strong= user.name
                 span.glyphicon.glyphicon-chevron-down
             li.nav-item
               a.nav-link(href="/users/logout") Logout
@@ -32,7 +34,7 @@ html
               a.nav-link(href='/users/login') Log In
             li.nav-item
               a.nav-link(href='/users/register') Sign Up    
-    .container
+    .container(style="background-color:#f2f2f2")
       != messages('message', locals)
       if errors
         each error, i in errors

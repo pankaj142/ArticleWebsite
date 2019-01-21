@@ -1,9 +1,48 @@
 extends layout
 
 block content 
-  h2 #{title} 
-  ul.list-group
-    each article, i in articles
-      li.list-group-item
-       a(href="/articles/"+article._id)= article.title 
-      br
+  .nav-scroller.py-1.mb-2
+    nav.nav.d-flex.justify-content-between
+      a.p-2.text-muted(href='#') World
+      a.p-2.text-muted(href='#') U.S.
+      a.p-2.text-muted(href='#') Technology
+      a.p-2.text-muted(href='#') Design
+      a.p-2.text-muted(href='#') Culture
+      a.p-2.text-muted(href='#') Business
+      a.p-2.text-muted(href='#') Politics
+      a.p-2.text-muted(href='#') Opinion
+      a.p-2.text-muted(href='#') Science
+      a.p-2.text-muted(href='#') Health
+      a.p-2.text-muted(href='#') Style
+      a.p-2.text-muted(href='#') Travel
+  if articles    
+    .jumbotron.p-3.p-md-5.text-white.rounded.bg-dark
+      .col-md-12.px-0
+        h4 today's most viewed article
+        h1.display-4.font-italic= articles[latestArticleCount].title
+        p.lead.my-3
+          | #{articles[latestArticleCount].description}
+        p.lead.mb-0
+          a.text-white.font-weight-bold(href='/articles/'+articles[latestArticleCount]._id) Continue reading...
+
+  .row.mb-2
+    .col-md-8
+      ul.list-group
+      each article, i in articles
+        .card.flex-md-row.mb-4.shadow-sm.h-md-250
+          .row
+            .col-8
+              .card-body.d-flex.flex-column.align-items-start
+                h3.mb-0
+                  a.text-dark(href="/articles/"+article._id)= article.title
+                .mb-1.text-muted #{article.date}
+                p.card-text.mb-auto
+                  | #{article.description}
+                a(href='/articles/'+article._id) Continue reading
+            .col-4(style="width:550px")
+              img(src="/article/images/"+ article.images,  width='100%', height='100%' alt="Avatar")
+    .col-md-4
+      h3 Archives
+      ul.list-group
+        each archive, i in archives
+          a(href="#")= archive    
