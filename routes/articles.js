@@ -128,7 +128,7 @@ router.get('/edit/:id', ensureAuthenticated, function(req,res){
 router.post('/edit/:id',function(req,res){
     let article = {};
     article.title = req.body.title;
-    article.author = req.body.author;
+    article.description = req.body.description;
     article.body = req.body.body;
     let query = {_id: req.params.id};
 
@@ -138,7 +138,7 @@ router.post('/edit/:id',function(req,res){
         }else{
             //warning beacuse the it is the bootstrap class of alert
             req.flash('warning ','Article Updated Successfully!')
-            res.redirect('/')
+            res.redirect('/articles/'+req.params.id)
         }
     })
 })

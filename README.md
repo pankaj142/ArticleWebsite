@@ -12,6 +12,7 @@ Write your Article/Blog on this website.
 * Nodejs
 * Expressjs
 * Pug(Jade) 
+* Passportjs
 * CSS
 * HTML5
 * Bootstarp

@@ -118,6 +118,6 @@ const users = require('./routes/users');
 app.use('/users',users)
 
 //Start Server
-app.listen(3000,function(){
-    console.log("Server is running on 3000 port...")
+app.listen(80,function(){
+    console.log("Server is running on 80 port...")
 })
