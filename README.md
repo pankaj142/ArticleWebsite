@@ -28,3 +28,6 @@ Link: http://139.59.91.93/
 3) Install dependencies i.e npm install
 4) Start app i.e npm start
 5) Open url "localhost:3000" on browser 
+
+# Note
+Use port 3000 in app.js
