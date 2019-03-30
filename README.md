@@ -30,7 +30,7 @@ Write your Blog on here.
 
 # See App
 
-Link: https://webblogies.herokuapp.com/
+Link: https://weblogies.herokuapp.com/
 
 # To start the app follow the commands on command prompt:
 
