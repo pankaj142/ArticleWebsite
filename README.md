@@ -17,7 +17,7 @@ Write your Blog on here.
 - Passportjs
 - CSS
 - HTML5
-- Bootstarp,
+- Bootstarp
 
 # App hosted on
 
@@ -39,5 +39,10 @@ Link: https://weblogies.herokuapp.com/
 3. Install dependencies i.e npm install
 4. Start app i.e npm start
 5. Open url "localhost:3000" on browser
-
-Thank you :)
+6. Sign up for cloudinary.com
+7. Install multer and cloudinary into your project
+   - npm i -S multer cloudinary
+8. Replace cloud_name with your cloud name from the cloudinary dashboard (after logging in to the account you created).
+9. create new file .env in root directory
+10. Add CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET to .env file and assign them respective crediential values from your cloudinary account. And you are good to go.
+    Thank you :)
