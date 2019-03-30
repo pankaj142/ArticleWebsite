@@ -40,7 +40,7 @@ block content
                   | #{article.description}
                 a(href='/articles/'+article._id) Continue reading
             .col-4(style="width:550px")
-              img(src="/article/images/"+ article.images,  width='100%', height='100%' alt="Avatar")
+              img(src=article.images,  width='100%', height='100%' alt="Avatar")
     .col-md-4
       h3 Archives
       ul.list-group
