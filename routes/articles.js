@@ -1,32 +1,31 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator/check");
-const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, "./uploads/articles/images");
-  },
-  filename: function(req, file, cb) {
-    cb(null, req.body.title + "_image." + file.mimetype.split("/")[1]);
+//multer image upload
+const multer = require("multer");
+var storage = multer.diskStorage({
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
   }
 });
-
-function fileFilter(req, file, cb) {
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    return cb(new Error("Only jpeg and png images allowed."));
+var imageFilter = function(req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error("Only image files are allowed!"));
   }
-}
+  cb(null, true);
+};
+var multerConfig = multer({ storage: storage, fileFilter: imageFilter }).single(
+  "picture"
+);
 
-const multerConfig = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5
-  },
-  fileFilter: fileFilter
-}).single("picture");
+var cloudinary = require("cloudinary");
+cloudinary.config({
+  cloud_name: "pankaj142",
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 //Import Article Model
 const Article = require("../models/article");
@@ -46,7 +45,7 @@ router.post(
       if (err) {
         req.flash(
           "danger",
-          "Picture file extension is invalid. Only jpeg and png images allowed."
+          "Image file extension is invalid. Only jpeg and png images allowed."
         );
         res.redirect("/articles/add");
       } else {
@@ -54,6 +53,7 @@ router.post(
       }
     });
   },
+  //validation array req.body
   [
     check("title", "Please enter Title!")
       .not()
@@ -65,34 +65,58 @@ router.post(
       .not()
       .isEmpty()
   ],
-  function(req, res) {
+  function(req, res, next) {
+    //validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const allErrors = errors.array(false);
-      res.render("add_article", { title: "Add Article", errors: allErrors });
+      return res.render("add_article", {
+        title: "Add Article",
+        errors: allErrors
+      });
     } else if (req.file === undefined) {
       req.flash("danger", "Image is not selected.");
-      res.redirect("/articles/add");
-    } else {
-      let article = new Article();
-      article.title = req.body.title;
-      article.description = req.body.description;
-      //req.user contains logined users details
-      article.author = req.user.name;
-      article.images = req.file.filename;
-      article.body = req.body.body;
-      article.date = new Date();
-      article.userId = req.user._id;
-      article.save(function(err) {
-        if (err) {
-          console.log(err);
-          return;
-        } else {
-          req.flash("success", "Article added successfully!");
-          res.redirect("/");
-        }
-      });
+      return res.redirect("/articles/add");
     }
+    next();
+  },
+  function(req, res, next) {
+    //image store to cloudinary
+    cloudinary.uploader
+      .upload(req.file.path)
+      .then(result => {
+        if (!result) {
+          req.flash("danger", "Could not upload image.");
+          return res.redirect("/users/register");
+        }
+        req.imageUrl = result.secure_url;
+        next();
+      })
+      .catch(err => {
+        req.flash("danger", "Could not upload image.");
+        return res.redirect("/users/register");
+      });
+  },
+  function(req, res) {
+    let article = new Article();
+    article.title = req.body.title;
+    article.description = req.body.description;
+    //req.user contains logined users details
+    article.author = req.user.name;
+    // article.images = req.file.filename;
+    article.images = req.imageUrl;
+    article.body = req.body.body;
+    article.date = new Date();
+    article.userId = req.user._id;
+    article.save(function(err) {
+      if (err) {
+        console.log(err);
+        return;
+      } else {
+        req.flash("success", "Article added successfully!");
+        res.redirect("/");
+      }
+    });
   }
 );
 //Get Single Article

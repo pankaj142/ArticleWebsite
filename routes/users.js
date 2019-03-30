@@ -4,30 +4,30 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator/check");
 const passport = require("passport");
 
+//multer image upload
 const multer = require("multer");
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, "./uploads/users/avatars");
-  },
-  filename: function(req, file, cb) {
-    cb(null, req.body.username + "_avatar." + file.mimetype.split("/")[1]);
+var storage = multer.diskStorage({
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
   }
 });
-
-function fileFilter(req, file, cb) {
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    return cb(new Error("Only jpeg and png images allowed."));
+var imageFilter = function(req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error("Only image files are allowed!"), false);
   }
-}
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5
-  },
-  fileFilter: fileFilter
-}).single("avatar");
+  cb(null, true);
+};
+var multerConfig = multer({ storage: storage, fileFilter: imageFilter }).single(
+  "avatar"
+);
+
+var cloudinary = require("cloudinary");
+cloudinary.config({
+  cloud_name: "pankaj142",
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 //User Model
 const User = require("../models/user");
@@ -39,20 +39,21 @@ router.get("/register", function(req, res) {
 
 router.post(
   "/register",
-  //mutler middleware is for image upload and handling errors
+  //multer middleware- handles image file upload
   function(req, res, next) {
-    upload(req, res, function(err) {
+    multerConfig(req, res, function(err) {
       if (err) {
         req.flash(
           "danger",
-          "Profile Picture file extension is invalid. Only jpeg and png images allowed."
+          "Avatar file extension is invalid. Only jpeg and png images allowed."
         );
-        res.redirect("/users/register");
+        res.redirect("/articles/add");
       } else {
         next();
       }
     });
   },
+
   //validation array req.body
   [
     check("name")
@@ -82,39 +83,56 @@ router.post(
         }
       })
   ],
-  function(req, res) {
+  function(req, res, next) {
+    //validation errors
     const errors = validationResult(req);
     console.log("errors", errors.array());
 
     if (!errors.isEmpty()) {
-      res.render("register", { errors: errors.array() });
+      return res.render("register", { errors: errors.array() });
     } else if (req.file === undefined) {
       //avatar file validation
       req.flash("danger", "Please select your Avatar.");
-      res.redirect("/users/register");
-    } else {
-      bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(req.body.password, salt, function(err, hash) {
-          let userDetails = new User();
-          userDetails.name = req.body.name;
-          userDetails.email = req.body.email;
-          userDetails.username = req.body.username;
-          (userDetails.avatar = req.file.filename),
-            (userDetails.password = hash);
-          userDetails.save(function(err) {
-            if (err) {
-              console.log(err);
-            } else {
-              req.flash(
-                "success",
-                "You Registered successfully! You can login!"
-              );
-              res.redirect("/");
-            }
-          });
+      return res.redirect("/users/register");
+    }
+    next();
+  },
+  function(req, res, next) {
+    //mutler middleware is for image upload and handling errors
+    cloudinary.uploader
+      .upload(req.file.path)
+      .then(result => {
+        if (!result) {
+          req.flash("danger", "Could not upload profile picture.");
+          return res.redirect("/users/register");
+        }
+        req.imageUrl = result.secure_url;
+        next();
+      })
+      .catch(err => {
+        req.flash("danger", "Could not upload profile picture.");
+        return res.redirect("/users/register");
+      });
+  },
+  function(req, res) {
+    bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.hash(req.body.password, salt, function(err, hash) {
+        let userDetails = new User();
+        userDetails.name = req.body.name;
+        userDetails.email = req.body.email;
+        userDetails.username = req.body.username;
+        // (userDetails.avatar = req.file.filename),
+        (userDetails.avatar = req.imageUrl), (userDetails.password = hash);
+        userDetails.save(function(err) {
+          if (err) {
+            console.log(err);
+          } else {
+            req.flash("success", "You Registered successfully! You can login!");
+            res.redirect("/");
+          }
         });
       });
-    }
+    });
   }
 );
 
