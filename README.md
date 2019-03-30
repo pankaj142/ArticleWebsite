@@ -1,12 +1,12 @@
-# Webloggies
+# Webbloggies
 
-Write your Article/Blog on this website.
+Write your Blog on here.
 
 # Functionalities
 
 - Its Blog website.
 - User can resister and can write their blogs/articles.
-- User can edit and delete his/her articles
+- User can edit and delete his articles
 - Anyone can visite and read all articles without logging in.
 
 # Technologies
@@ -19,9 +19,14 @@ Write your Article/Blog on this website.
 - HTML5
 - Bootstarp,
 
-# App hosted on- Heroku
+# App hosted on
 
-# Images(User Avatars and blog images) are stored at Cloud storage- Cloudinary.com using multer
+- Heroku
+
+# Image stored at Cloud
+
+- Images(User Avatars and blog images) are stored at Cloud storage- Cloudinary.com using multer
+- Previously images were stored locally on remote machine
 
 # See App
 
@@ -35,6 +40,4 @@ Link: https://webblogies.herokuapp.com/
 4. Start app i.e npm start
 5. Open url "localhost:3000" on browser
 
-# Note
-
-Use port 3000 in app.js
+Thank you :)
